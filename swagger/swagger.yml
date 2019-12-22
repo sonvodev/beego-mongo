@@ -1,0 +1,61 @@
+swagger: "2.0"
+info:
+  title: beego Test API
+  description: beego has a very cool tools to autogenerate documents for your API
+  version: 1.0.0
+  termsOfService: http://beego.me/
+  contact:
+    email: astaxie@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+basePath: /v1
+paths:
+  /users/:
+    get:
+      tags:
+      - users
+      description: get all users
+      operationId: UserController.GetListUsers
+      parameters:
+      - in: query
+        name: size
+        description: The object content
+        type: integer
+        format: int64
+      - in: query
+        name: index
+        description: The object content
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/UserDocument'
+  /words/:
+    get:
+      tags:
+      - words
+      description: get all users
+      operationId: WordController.GetListUsers
+      parameters:
+      - in: query
+        name: size
+        description: The object content
+        type: integer
+        format: int64
+      - in: query
+        name: index
+        description: The object content
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/UserDocument'
+definitions:
+  UserDocument:
+    title: UserDocument
+    type: object
