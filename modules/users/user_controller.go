@@ -1,7 +1,6 @@
 package users
 
 import (
-	"wordbook/models"
 	"wordbook/modules"
 )
 
@@ -24,8 +23,11 @@ func init() {
 // @Success 200 {object} UserDocument
 // @router / [get]
 func (this *UserController) Get() {
-
-	filter := UserParameter{BaseParameterModel: models.BaseParameterModel{Index: 1, Size: 20}}
-	words, count, err := service.GetListWords(filter)
-	this.WrapListResponse(words, count, err, filter.Index, filter.Size)
+	condition := UserParameter{}
+	if err := this.ParseForm(&condition); err != nil {
+		this.WrapListResponse([0]UserDocument{}, 0, err, 1, 20)
+		return
+	}
+	words, count, err := service.GetListWords(&condition)
+	this.WrapListResponse(words, count, err, 1, 20)
 }

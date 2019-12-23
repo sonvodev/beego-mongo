@@ -1,32 +1,29 @@
 package users
 
 import (
-	"context"
 	"log"
 	"wordbook/modules"
+	"wordbook/processors"
 
-	"gopkg.in/mgo.v2/bson"
+	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type UserService struct {
 }
 
 var (
-	super *modules.AppBaseService = &modules.AppBaseService{CollectionName: "users"}
+	super modules.AppBaseService = modules.AppBaseService{Collection: processors.GetCollection("users")}
 )
 
-func init() {
-	super.GetCollection()
-}
+func (this *UserService) GetListWords(param *UserParameter) ([]*UserDocument, int64, error) {
 
-func (this *UserService) GetListWords(filter UserParameter) ([]*UserDocument, int64, error) {
+	condition := bson.M{}
 
-	condition := bson.M{
-	}
+	cur, count, resErr := super.GetList(condition, param.BaseParameterModel.Index-1, param.BaseParameterModel.Size)
+	defer cur.Close(context.Background())
 
-	cur, count, resErr := super.GetList(condition, filter.BaseParameterModel.Index, filter.BaseParameterModel.Size)
-
-	
 	if resErr != nil {
 		return nil, 0, resErr
 	}

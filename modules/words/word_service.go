@@ -1,23 +1,19 @@
 package words
 
 import (
+	"wordbook/processors"
 	"context"
 	"log"
 	"wordbook/modules"
-
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type WordService struct {
 }
 
 var (
-	super *modules.AppBaseService = &modules.AppBaseService{CollectionName: "words"}
+	super modules.AppBaseService = modules.AppBaseService{Collection: processors.GetCollection("words")}
 )
-
-func init() {
-	super.GetCollection()
-}
 
 func (this *WordService) GetListWords(filter WordParameter) ([]*WordDocument, int64, error) {
 
@@ -25,7 +21,7 @@ func (this *WordService) GetListWords(filter WordParameter) ([]*WordDocument, in
 	}
 
 	cur, count, resErr := super.GetList(condition, filter.BaseParameterModel.Index, filter.BaseParameterModel.Size)
-	defer cur.Close(context.TODO())
+	defer cur.Close(context.Background())
 
 	
 	if resErr != nil {
@@ -42,6 +38,6 @@ func (this *WordService) GetListWords(filter WordParameter) ([]*WordDocument, in
 
 		docs = append(docs, &u)
 	}
-
+	
 	return docs, count, nil
 }

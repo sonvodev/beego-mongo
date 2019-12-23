@@ -6,6 +6,6 @@ import (
 
 type UserParameter struct {
 	models.BaseParameterModel
-	Name  string
-	Email string
+	Name  string `form:"name"`
+	Email string `form:"email"`
 }

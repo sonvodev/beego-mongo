@@ -1,7 +1,7 @@
 package models
 
 type BaseParameterModel struct {
-	Index   int64
-	Size    int64
-	Keyword string
+	Index   int64  `form:"index,int"`
+	Size    int64  `form:"size,int"`
+	Keyword string `form:"keyword"`
 }

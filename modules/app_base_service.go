@@ -1,37 +1,59 @@
 package modules
 
 import (
-	"log"
 	"context"
-	"wordbook/processors"
+
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"go.mongodb.org/mongo-driver/mongo"
-	// "go.mongodb.org/mongo-driver/bson"
 )
 
-type AppBaseService struct {
-	CollectionName string
-}
+type (
+	AppBaseService struct {
+		Collection *mongo.Collection
+	}
 
-var (
-	collection *mongo.Collection
+	FindOptions struct {
+		Limit *int64
+	}
 )
-
-func (this *AppBaseService) GetCollection() {
-	collection = processors.GetCollection(this.CollectionName)
-}
 
 func (this *AppBaseService) GetList(filter interface{}, index int64, size int64) (*mongo.Cursor, int64, error) {
 
-	log.Println("Quering on ", this.CollectionName)
-	res, resErr := collection.Find(context.TODO(), filter)
+	limit := int64(size)
+	skip := int64(index * size)
+	findOptions := options.FindOptions{Limit: &limit, Skip: &skip}
+
+	cur, resErr := this.Collection.Find(context.TODO(), filter, &findOptions)
+
 	if resErr != nil {
 		return nil, 0, resErr
 	}
 
-	count, cerr := collection.CountDocuments(context.TODO(),filter)
-	if cerr != nil {
-		return nil, 0, cerr
+	count, resErr := this.Collection.CountDocuments(context.TODO(), filter)
+	if resErr != nil {
+		return nil, 0, resErr
 	}
-	return res, count, nil
+
+	return cur, count, nil
+}
+
+func (this *AppBaseService) InsertOne(doc interface{}) (*mongo.InsertOneResult, error) {
+
+	cur, err := this.Collection.InsertOne(context.TODO(), doc)
+	if err != nil {
+		return nil, err
+	}
+
+	return cur, nil
+}
+
+func (this *AppBaseService) InsertMany(doc []interface{}) (*mongo.InsertManyResult, error) {
+
+	cur, err := this.Collection.InsertMany(context.TODO(), doc)
+	if err != nil {
+		return nil, err
+	}
+
+	return cur, nil
 }

@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"log"
 	"math"
 	"strconv"
 
@@ -13,8 +14,11 @@ type AppBaseController struct {
 
 func (this *AppBaseController) WrapListResponse(data interface{}, count int64, err error, index int64, size int64) {
 
+	log.Println(data)
+
 	if err != nil {
 		this.Data["json"] = err.Error()
+		this.Ctx.Output.SetStatus(500)
 	} else {
 		this.Data["json"] = data
 		totalPage := math.Ceil(float64(count) / float64(size))
